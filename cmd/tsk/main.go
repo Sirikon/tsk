@@ -2,19 +2,18 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"os"
 
-	"github.com/Sirikon/tsk/src"
+	"github.com/Sirikon/tsk/src/cli"
 )
 
 func main() {
-	commands, err := src.GetCommands()
-	if err != nil {
-		log.Fatal(err)
+	args := os.Args[1:]
+
+	if len(args) == 0 {
+		cli.Index()
 		return
 	}
 
-	for _, command := range commands {
-		fmt.Println(command)
-	}
+	fmt.Println(args)
 }

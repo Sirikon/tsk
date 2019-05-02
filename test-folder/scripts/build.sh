@@ -1,3 +1,3 @@
 #!/bin/sh
 
-echo "Building"
+echo "root build"

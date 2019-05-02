@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/Sirikon/tsk/src/cli"
@@ -15,5 +14,5 @@ func main() {
 		return
 	}
 
-	fmt.Println(args)
+	cli.Run(args)
 }

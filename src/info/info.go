@@ -1,4 +1,4 @@
-package src
+package info
 
 import (
 	"io/ioutil"
@@ -9,24 +9,26 @@ import (
 // Command .
 type Command struct {
 	Name        string
-	Subcommands []Command
+	Path        string
+	Subcommands []*Command
 }
 
 // GetCommands .
-func GetCommands() ([]Command, error) {
+func GetCommands() ([]*Command, error) {
 	return getCommandsInFolder("./scripts")
 }
 
-func getCommandsInFolder(path string) ([]Command, error) {
+func getCommandsInFolder(path string) ([]*Command, error) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		return nil, err
 	}
 
-	result := make([]Command, len(files))
+	result := make([]*Command, len(files))
 	for i, file := range files {
-		command := Command{
+		command := &Command{
 			Name: removeFileExtension(file.Name()),
+			Path: path + "/" + file.Name(),
 		}
 		if file.IsDir() {
 			commands, err := getCommandsInFolder(path + "/" + file.Name())

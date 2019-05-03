@@ -57,7 +57,7 @@ func runCommand(command *info.Command, tskFile *info.TskFile) {
 	cmd := exec.Command("sh", command.Path)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	cmd.Env = tskFile.BuildEnvVars()
+	cmd.Env = append(os.Environ(), tskFile.BuildEnvVars()...)
 	err := cmd.Run()
 	if err != nil {
 		os.Exit(1)

@@ -10,11 +10,11 @@ import (
 
 const baseSpacing = "  "
 
-func printHeader() {
+func printHeader(tskFile *info.TskFile) {
 	fmt.Println()
 
 	fmt.Print(baseSpacing)
-	fmt.Println(aurora.Bold("tsk"))
+	fmt.Println(aurora.Bold(aurora.Magenta("tsk")), aurora.Bold(tskFile.Name))
 
 	fmt.Print(baseSpacing)
 	fmt.Println(aurora.Faint("Usage: tsk [command] <subcommands...>"))

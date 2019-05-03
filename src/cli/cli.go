@@ -18,15 +18,21 @@ func getCommands() []*info.Command {
 	return commands
 }
 
-// Index .
-func Index() {
-	commands, err := info.GetCommands()
+func getTskFile() *info.TskFile {
+	tskFile, err := info.ReadTskFile()
 	if err != nil {
 		log.Fatal(err)
-		return
+		return nil
 	}
+	return tskFile
+}
 
-	printHeader()
+// Index .
+func Index() {
+	tskFile := getTskFile()
+	commands := getCommands()
+
+	printHeader(tskFile)
 
 	for _, command := range commands {
 		printCommand(command, 0)
@@ -37,19 +43,21 @@ func Index() {
 
 // Run .
 func Run(args []string) {
+	tskFile := getTskFile()
 	commands := getCommands()
 	command := findCommand(args, commands)
 	if command != nil && command.IsRunnable() {
-		runCommand(command)
+		runCommand(command, tskFile)
 	} else {
 		fmt.Println("Command not found")
 	}
 }
 
-func runCommand(command *info.Command) {
+func runCommand(command *info.Command, tskFile *info.TskFile) {
 	cmd := exec.Command("sh", command.Path)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+	cmd.Env = tskFile.BuildEnvVars()
 	err := cmd.Run()
 	if err != nil {
 		os.Exit(1)

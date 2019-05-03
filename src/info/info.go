@@ -13,6 +13,11 @@ type Command struct {
 	Subcommands []*Command
 }
 
+// IsRunnable .
+func (c *Command) IsRunnable() bool {
+	return len(c.Subcommands) == 0
+}
+
 // GetCommands .
 func GetCommands() ([]*Command, error) {
 	return getCommandsInFolder("./scripts")

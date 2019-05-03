@@ -3,6 +3,8 @@ package cli
 import (
 	"fmt"
 	"log"
+	"os"
+	"os/exec"
 
 	"github.com/Sirikon/tsk/src/info"
 )
@@ -37,10 +39,20 @@ func Index() {
 func Run(args []string) {
 	commands := getCommands()
 	command := findCommand(args, commands)
-	if command != nil {
-		fmt.Println(command.Path)
+	if command != nil && command.IsRunnable() {
+		runCommand(command)
 	} else {
 		fmt.Println("Command not found")
+	}
+}
+
+func runCommand(command *info.Command) {
+	cmd := exec.Command("sh", command.Path)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		os.Exit(1)
 	}
 }
 

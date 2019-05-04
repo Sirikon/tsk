@@ -1,9 +1,11 @@
 package info
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
 
 	"gopkg.in/yaml.v2"
 )
@@ -53,8 +55,16 @@ func ReadTskFile() (*TskFile, error) {
 }
 
 func findTskfileDirectory(basepath string) (string, error) {
+	rootPath, err := filepath.Abs("/")
+	if err != nil {
+		return "", err
+	}
+
 	fullPath := path.Join(basepath, "Tskfile.yml")
 	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+		if rootPath == basepath {
+			return "", errors.New("Tskfile not found")
+		}
 		return findTskfileDirectory(path.Join(basepath, ".."))
 	}
 	return basepath, nil

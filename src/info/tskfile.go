@@ -2,6 +2,8 @@ package info
 
 import (
 	"io/ioutil"
+	"os"
+	"path"
 
 	"gopkg.in/yaml.v2"
 )
@@ -10,6 +12,7 @@ import (
 type TskFile struct {
 	Name string
 	Env  map[string]string
+	CWD  string
 }
 
 // BuildEnvVars .
@@ -23,7 +26,17 @@ func (t *TskFile) BuildEnvVars() []string {
 
 // ReadTskFile .
 func ReadTskFile() (*TskFile, error) {
-	data, err := ioutil.ReadFile("./Tskfile.yml")
+	cwd, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+
+	tskfileDirectory, err := findTskfileDirectory(cwd)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := ioutil.ReadFile(path.Join(tskfileDirectory, "Tskfile.yml"))
 	if err != nil {
 		return nil, err
 	}
@@ -34,5 +47,15 @@ func ReadTskFile() (*TskFile, error) {
 		return nil, err
 	}
 
+	tskFile.CWD = tskfileDirectory
+
 	return tskFile, nil
+}
+
+func findTskfileDirectory(basepath string) (string, error) {
+	fullPath := path.Join(basepath, "Tskfile.yml")
+	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+		return findTskfileDirectory(path.Join(basepath, ".."))
+	}
+	return basepath, nil
 }

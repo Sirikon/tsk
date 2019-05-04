@@ -9,8 +9,8 @@ import (
 	"github.com/Sirikon/tsk/src/info"
 )
 
-func getCommands() []*info.Command {
-	commands, err := info.GetCommands()
+func getCommands(tskfile *info.TskFile) []*info.Command {
+	commands, err := info.GetCommands(tskfile)
 	if err != nil {
 		log.Fatal(err)
 		return nil
@@ -30,7 +30,7 @@ func getTskFile() *info.TskFile {
 // Index .
 func Index() {
 	tskFile := getTskFile()
-	commands := getCommands()
+	commands := getCommands(tskFile)
 
 	printHeader(tskFile)
 
@@ -44,7 +44,7 @@ func Index() {
 // Run .
 func Run(args []string) {
 	tskFile := getTskFile()
-	commands := getCommands()
+	commands := getCommands(tskFile)
 	command := findCommand(args, commands)
 	if command != nil && command.IsRunnable() {
 		runCommand(command, tskFile)
@@ -55,6 +55,7 @@ func Run(args []string) {
 
 func runCommand(command *info.Command, tskFile *info.TskFile) {
 	cmd := exec.Command("sh", command.Path)
+	cmd.Dir = tskFile.CWD
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Env = append(os.Environ(), tskFile.BuildEnvVars()...)

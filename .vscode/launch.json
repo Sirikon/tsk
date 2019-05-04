@@ -7,7 +7,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/cmd/tsk",
-            "cwd": "${workspaceFolder}/test-folder",
+            "cwd": "${workspaceFolder}/test-folder/scripts",
             "env": {},
             "args": []
         },

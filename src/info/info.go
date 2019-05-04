@@ -2,6 +2,7 @@ package info
 
 import (
 	"io/ioutil"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -19,8 +20,8 @@ func (c *Command) IsRunnable() bool {
 }
 
 // GetCommands .
-func GetCommands() ([]*Command, error) {
-	return getCommandsInFolder("./scripts")
+func GetCommands(tskfile *TskFile) ([]*Command, error) {
+	return getCommandsInFolder(path.Join(tskfile.CWD, "scripts"))
 }
 
 func getCommandsInFolder(path string) ([]*Command, error) {

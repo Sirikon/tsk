@@ -18,5 +18,5 @@ func main() {
 		ColorsEnabled: true,
 	}
 
-	c.Run(os.Args[1:])
+	os.Exit(c.Run(os.Args[1:]))
 }

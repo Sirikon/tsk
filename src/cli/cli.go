@@ -16,16 +16,16 @@ type CLI struct {
 	ColorsEnabled bool
 }
 
-func (c *CLI) Run(args []string) {
+func (c *CLI) Run(args []string) int {
 	if len(args) == 0 {
-		c.Index()
-		return
+		c.index()
+		return 0
 	}
-	c.RunCommand(args)
+	return c.runCommand(args)
 }
 
 // Index .
-func (c *CLI) Index() {
+func (c *CLI) index() {
 	tskFile := c.getTskFile()
 	commands := getCommands(tskFile)
 	p := c.getPrinter()
@@ -36,19 +36,20 @@ func (c *CLI) Index() {
 		p.command(command, tskFile, 0)
 	}
 
-	fmt.Println()
+	fmt.Fprintln(c.Out)
 }
 
 // RunCommand .
-func (c *CLI) RunCommand(args []string) {
+func (c *CLI) runCommand(args []string) int {
 	tskFile := c.getTskFile()
 	commands := getCommands(tskFile)
 	command := findCommand(args, commands)
-	if command != nil && command.IsRunnable() {
-		runCommand(command, tskFile)
-	} else {
-		fmt.Println("Command not found")
+
+	if command == nil || !command.IsRunnable() {
+		_, _ = fmt.Fprintln(c.Out, "Command not found")
 	}
+
+	return c.execCommand(command, tskFile)
 }
 
 func (c *CLI) getPrinter() *printer {
@@ -76,16 +77,17 @@ func (c *CLI) getTskFile() *info.TskFile {
 	return tskFile
 }
 
-func runCommand(command *info.Command, tskFile *info.TskFile) {
+func (c *CLI) execCommand(command *info.Command, tskFile *info.TskFile) int {
 	cmd := exec.Command("sh", command.Path)
 	cmd.Dir = tskFile.CWD
-	cmd.Stdout = os.Stdout
+	cmd.Stdout = c.Out
 	cmd.Stderr = os.Stderr
 	cmd.Env = append(os.Environ(), tskFile.BuildEnvVars()...)
 	err := cmd.Run()
 	if err != nil {
-		os.Exit(1)
+		return 1
 	}
+	return 0
 }
 
 func findCommand(args []string, commands []*info.Command) *info.Command {

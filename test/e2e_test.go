@@ -43,6 +43,14 @@ func TestCLI_Run_Deep_Command(t *testing.T) {
 	assertRun(t, []string{"docs", "build"}, 0, "docs build\n")
 }
 
+func TestCLI_Run_Unknown_Command(t *testing.T) {
+	assertRun(t, []string{"unknown"}, 1, "Command not found\n")
+}
+
+func TestCLI_Run_NonRunnable_Command(t *testing.T) {
+	assertRun(t, []string{"docs"}, 1, "Command not found\n")
+}
+
 func buildSut(out io.Writer) *cli.CLI {
 	cwd, err := os.Getwd()
 	if err != nil {

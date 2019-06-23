@@ -47,6 +47,7 @@ func (c *CLI) runCommand(args []string) int {
 
 	if command == nil || !command.IsRunnable() {
 		_, _ = fmt.Fprintln(c.Out, "Command not found")
+		return 1
 	}
 
 	return c.execCommand(command, tskFile)

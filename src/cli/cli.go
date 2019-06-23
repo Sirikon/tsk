@@ -2,12 +2,61 @@ package cli
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
 
 	"github.com/Sirikon/tsk/src/info"
 )
+
+type CLI struct {
+	CWD           string
+	Out           io.Writer
+	ColorsEnabled bool
+}
+
+func (c *CLI) Run(args []string) {
+	if len(args) == 0 {
+		c.Index()
+		return
+	}
+	c.RunCommand(args)
+}
+
+// Index .
+func (c *CLI) Index() {
+	tskFile := c.getTskFile()
+	commands := getCommands(tskFile)
+	p := c.getPrinter()
+
+	p.header(tskFile)
+
+	for _, command := range commands {
+		p.command(command, tskFile, 0)
+	}
+
+	fmt.Println()
+}
+
+// RunCommand .
+func (c *CLI) RunCommand(args []string) {
+	tskFile := c.getTskFile()
+	commands := getCommands(tskFile)
+	command := findCommand(args, commands)
+	if command != nil && command.IsRunnable() {
+		runCommand(command, tskFile)
+	} else {
+		fmt.Println("Command not found")
+	}
+}
+
+func (c *CLI) getPrinter() *printer {
+	return &printer{
+		colorsEnabled: c.ColorsEnabled,
+		out:           c.Out,
+	}
+}
 
 func getCommands(tskfile *info.TskFile) []*info.Command {
 	commands, err := info.GetCommands(tskfile)
@@ -18,39 +67,13 @@ func getCommands(tskfile *info.TskFile) []*info.Command {
 	return commands
 }
 
-func getTskFile() *info.TskFile {
-	tskFile, err := info.ReadTskFile()
+func (c *CLI) getTskFile() *info.TskFile {
+	tskFile, err := info.ReadTskFile(c.CWD)
 	if err != nil {
 		log.Fatal(err)
 		return nil
 	}
 	return tskFile
-}
-
-// Index .
-func Index() {
-	tskFile := getTskFile()
-	commands := getCommands(tskFile)
-
-	printHeader(tskFile)
-
-	for _, command := range commands {
-		printCommand(command, 0)
-	}
-
-	fmt.Println()
-}
-
-// Run .
-func Run(args []string) {
-	tskFile := getTskFile()
-	commands := getCommands(tskFile)
-	command := findCommand(args, commands)
-	if command != nil && command.IsRunnable() {
-		runCommand(command, tskFile)
-	} else {
-		fmt.Println("Command not found")
-	}
 }
 
 func runCommand(command *info.Command, tskFile *info.TskFile) {

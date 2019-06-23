@@ -27,12 +27,7 @@ func (t *TskFile) BuildEnvVars() []string {
 }
 
 // ReadTskFile .
-func ReadTskFile() (*TskFile, error) {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
+func ReadTskFile(cwd string) (*TskFile, error) {
 	tskfileDirectory, err := findTskfileDirectory(cwd)
 	if err != nil {
 		return nil, err

@@ -24,8 +24,8 @@ func GetCommands(tskfile *TskFile) ([]*Command, error) {
 	return getCommandsInFolder(path.Join(tskfile.CWD, "scripts"))
 }
 
-func getCommandsInFolder(path string) ([]*Command, error) {
-	files, err := ioutil.ReadDir(path)
+func getCommandsInFolder(folderPath string) ([]*Command, error) {
+	files, err := ioutil.ReadDir(folderPath)
 	if err != nil {
 		return nil, err
 	}
@@ -34,10 +34,10 @@ func getCommandsInFolder(path string) ([]*Command, error) {
 	for i, file := range files {
 		command := &Command{
 			Name: removeFileExtension(file.Name()),
-			Path: path + "/" + file.Name(),
+			Path: path.Join(folderPath, file.Name()),
 		}
 		if file.IsDir() {
-			commands, err := getCommandsInFolder(path + "/" + file.Name())
+			commands, err := getCommandsInFolder(folderPath + "/" + file.Name())
 			if err != nil {
 				return nil, err
 			}

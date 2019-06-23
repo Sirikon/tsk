@@ -1,18 +1,22 @@
 package main
 
 import (
-	"os"
-
 	"github.com/Sirikon/tsk/src/cli"
+	"log"
+	"os"
 )
 
 func main() {
-	args := os.Args[1:]
-
-	if len(args) == 0 {
-		cli.Index()
-		return
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	cli.Run(args)
+	c := &cli.CLI{
+		CWD:           cwd,
+		Out:           os.Stdout,
+		ColorsEnabled: true,
+	}
+
+	c.Run(os.Args[1:])
 }

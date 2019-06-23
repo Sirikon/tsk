@@ -3,7 +3,6 @@ package cli
 import (
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"os/exec"
 
@@ -18,16 +17,25 @@ type CLI struct {
 
 func (c *CLI) Run(args []string) int {
 	if len(args) == 0 {
-		c.index()
-		return 0
+		return c.index()
 	}
 	return c.runCommand(args)
 }
 
 // Index .
-func (c *CLI) index() {
-	tskFile := c.getTskFile()
-	commands := getCommands(tskFile)
+func (c *CLI) index() int {
+	tskFile, err := c.getTskFile()
+	if err != nil {
+		_, _ = fmt.Fprintln(c.Out, err)
+		return 1
+	}
+
+	commands, err := getCommands(tskFile)
+	if err != nil {
+		_, _ = fmt.Fprintln(c.Out, err)
+		return 1
+	}
+
 	p := c.getPrinter()
 
 	p.header(tskFile)
@@ -36,13 +44,23 @@ func (c *CLI) index() {
 		p.command(command, tskFile, 0)
 	}
 
-	fmt.Fprintln(c.Out)
+	_, _ = fmt.Fprintln(c.Out)
+	return 0
 }
 
-// RunCommand .
 func (c *CLI) runCommand(args []string) int {
-	tskFile := c.getTskFile()
-	commands := getCommands(tskFile)
+	tskFile, err := c.getTskFile()
+	if err != nil {
+		_, _ = fmt.Fprintln(c.Out, err)
+		return 1
+	}
+
+	commands, err := getCommands(tskFile)
+	if err != nil {
+		_, _ = fmt.Fprintln(c.Out, err)
+		return 1
+	}
+
 	command := findCommand(args, commands)
 
 	if command == nil || !command.IsRunnable() {
@@ -60,22 +78,20 @@ func (c *CLI) getPrinter() *printer {
 	}
 }
 
-func getCommands(tskfile *info.TskFile) []*info.Command {
+func getCommands(tskfile *info.TskFile) ([]*info.Command, error) {
 	commands, err := info.GetCommands(tskfile)
 	if err != nil {
-		log.Fatal(err)
-		return nil
+		return nil, err
 	}
-	return commands
+	return commands, nil
 }
 
-func (c *CLI) getTskFile() *info.TskFile {
+func (c *CLI) getTskFile() (*info.TskFile, error) {
 	tskFile, err := info.ReadTskFile(c.CWD)
 	if err != nil {
-		log.Fatal(err)
-		return nil
+		return nil, err
 	}
-	return tskFile
+	return tskFile, nil
 }
 
 func (c *CLI) execCommand(command *info.Command, tskFile *info.TskFile) int {

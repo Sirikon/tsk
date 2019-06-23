@@ -5,7 +5,6 @@ import (
 	"github.com/Sirikon/tsk/src/cli"
 	"gotest.tools/assert"
 	"io"
-	"log"
 	"os"
 	"path"
 	"testing"
@@ -53,9 +52,7 @@ func TestCLI_Run_NonRunnable_Command(t *testing.T) {
 
 func buildSut(out io.Writer) *cli.CLI {
 	cwd, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
+	handleError(err)
 	return &cli.CLI{
 		ColorsEnabled: false,
 		Out:           out,

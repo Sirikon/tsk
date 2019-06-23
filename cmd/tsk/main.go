@@ -1,15 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"github.com/Sirikon/tsk/src/cli"
-	"log"
 	"os"
 )
 
 func main() {
 	cwd, err := os.Getwd()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	c := &cli.CLI{

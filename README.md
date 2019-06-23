@@ -3,5 +3,5 @@
 ## Install
 
 ```bash
-go get -u github.com/sirikon/tsk/cmd/tsk
+go get -u github.com/Sirikon/tsk/cmd/tsk
 ```

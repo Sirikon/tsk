@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/Sirikon/tsk/src/cli"
+	"github.com/sirikon/tsk/src/cli"
 	"os"
 )
 

@@ -2,7 +2,7 @@ package test
 
 import (
 	"bytes"
-	"github.com/Sirikon/tsk/src/cli"
+	"github.com/sirikon/tsk/src/cli"
 	"gotest.tools/assert"
 	"io"
 	"os"

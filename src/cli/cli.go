@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/Sirikon/tsk/src/info"
+	"github.com/sirikon/tsk/src/info"
 )
 
 type CLI struct {

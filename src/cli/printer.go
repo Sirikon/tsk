@@ -2,8 +2,8 @@ package cli
 
 import (
 	"fmt"
-	"github.com/Sirikon/tsk/src/info"
-	"github.com/Sirikon/tsk/src/utils"
+	"github.com/sirikon/tsk/src/info"
+	"github.com/sirikon/tsk/src/utils"
 	"github.com/logrusorgru/aurora"
 	"io"
 	"path/filepath"

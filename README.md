@@ -37,5 +37,5 @@ as working directory, doesn't care about where you run `tsk`.
 Having the go tools installed, build from source and install:
 
 ```bash
-go get -u github.com/Sirikon/tsk/cmd/tsk
+go get -u github.com/sirikon/tsk/cmd/tsk
 ```

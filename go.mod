@@ -1,4 +1,4 @@
-module github.com/Sirikon/tsk
+module github.com/sirikon/tsk
 
 go 1.12
 

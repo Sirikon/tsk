@@ -99,6 +99,7 @@ func (c *CLI) execCommand(command *info.Command, tskFile *info.TskFile) int {
 	cmd.Dir = tskFile.CWD
 	cmd.Stdout = c.Out
 	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
 	cmd.Env = append(os.Environ(), tskFile.BuildEnvVars()...)
 	err := cmd.Run()
 	if err != nil {

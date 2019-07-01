@@ -19,6 +19,7 @@ func TestCLI_Index_When_No_Args(t *testing.T) {
     docs scripts/docs
       build scripts/docs/build.sh
     fail scripts/fail.sh
+    vim scripts/vim.sh
 
 `)
 }

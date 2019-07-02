@@ -19,7 +19,7 @@ func TestCLI_Index_When_No_Args(t *testing.T) {
     docs scripts/docs
       build scripts/docs/build.sh
     fail scripts/fail.sh
-    vim scripts/vim.sh
+    interactive scripts/interactive.sh
 
 `)
 }
@@ -49,6 +49,10 @@ func TestCLI_Run_Unknown_Command(t *testing.T) {
 
 func TestCLI_Run_NonRunnable_Command(t *testing.T) {
 	assertRun(t, []string{"docs"}, "", 1, "Command not found\n")
+}
+
+func TestCLI_Run_Interactive_Command(t *testing.T) {
+	assertRun(t, []string{"interactive"}, "hello world", 0, "hello world")
 }
 
 func buildSut(out io.Writer, err io.Writer, in io.Reader) *cli.CLI {

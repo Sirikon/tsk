@@ -15,6 +15,8 @@ func main() {
 	c := &cli.CLI{
 		CWD:           cwd,
 		Out:           os.Stdout,
+		Err:           os.Stderr,
+		In:            os.Stdin,
 		ColorsEnabled: true,
 	}
 

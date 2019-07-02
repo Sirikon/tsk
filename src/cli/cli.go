@@ -12,6 +12,8 @@ import (
 type CLI struct {
 	CWD           string
 	Out           io.Writer
+	Err           io.Writer
+	In            io.Reader
 	ColorsEnabled bool
 }
 
@@ -98,8 +100,8 @@ func (c *CLI) execCommand(command *info.Command, tskFile *info.TskFile) int {
 	cmd := exec.Command("sh", command.Path)
 	cmd.Dir = tskFile.CWD
 	cmd.Stdout = c.Out
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
+	cmd.Stderr = c.Err
+	cmd.Stdin = c.In
 	cmd.Env = append(os.Environ(), tskFile.BuildEnvVars()...)
 	err := cmd.Run()
 	if err != nil {

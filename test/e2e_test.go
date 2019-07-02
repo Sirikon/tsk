@@ -55,13 +55,13 @@ func TestCLI_Run_Interactive_Command(t *testing.T) {
 	assertRun(t, []string{"interactive"}, "hello world", 0, "hello world")
 }
 
-func buildSut(out io.Writer, err io.Writer, in io.Reader) *cli.CLI {
-	cwd, error := os.Getwd()
-	handleError(error)
+func buildSut(out io.Writer, errOut io.Writer, in io.Reader) *cli.CLI {
+	cwd, err := os.Getwd()
+	handleError(err)
 	return &cli.CLI{
 		ColorsEnabled: false,
 		Out:           out,
-		Err:           err,
+		Err:           errOut,
 		In:            in,
 		CWD:           path.Join(cwd, "test-folder"),
 	}

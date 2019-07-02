@@ -1,0 +1,40 @@
+before:
+  hooks:
+  - go mod download
+
+builds:
+- id: tsk
+  main: ./cmd/tsk/main.go
+  goos:
+  - linux
+  - darwin
+  - windows
+  env:
+  - CGO_ENABLED=0
+
+archives:
+- id: tsk
+  format_overrides:
+  - goos: windows
+    format: zip
+
+nfpms:
+- id: tsk
+  vendor: Sirikon
+  maintainer: Carlos Fdez. Llamas <hello@sirikon.me>
+  description: Task runner
+  license: GPL3
+  homepage: https://github.com/sirikon/tsk
+  formats:
+  - deb
+  - rpm
+
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^test:'

@@ -43,14 +43,14 @@ func (c *CLI) runCommand(args []string) (result int) {
 	p := c.getPrinter()
 	project := c.getProject()
 
-	command := findCommand(args, project.Commands)
+	command, remainingArgs := findCommand(args, project.Commands)
 
 	if command == nil || !command.Runnable {
 		p.line("Command not found")
 		return 1
 	}
 
-	return c.execCommand(command, project)
+	return c.execCommand(command, remainingArgs, project)
 }
 
 func (c *CLI) getProject() *application.Project {
@@ -65,8 +65,9 @@ func (c *CLI) getPrinter() *printer {
 	}
 }
 
-func (c *CLI) execCommand(command *application.Command, project *application.Project) int {
-	cmd := exec.Command("sh", command.Path)
+func (c *CLI) execCommand(command *application.Command, args []string, project *application.Project) int {
+	completeArgs := append([]string{command.Path}, args...)
+	cmd := exec.Command("sh", completeArgs...)
 	cmd.Dir = project.RootFolder
 	cmd.Stdout = c.Out
 	cmd.Stderr = c.Err
@@ -89,21 +90,21 @@ func buildEnvVars(tskFile *application.TskFile) []string {
 	return result
 }
 
-func findCommand(args []string, commands []*application.Command) *application.Command {
+func findCommand(args []string, commands []*application.Command) (command *application.Command, remainingArgs []string) {
 	if len(args) == 0 {
-		return nil
+		return nil, args
 	}
+
 	commandName := args[0]
-	isLast := len(args) == 1
+
 	for _, c := range commands {
 		if c.Name == commandName {
-			if isLast {
-				return c
+			if c.Runnable {
+				return c, args[1:]
 			}
-
 			return findCommand(args[1:], c.SubCommands)
 		}
 	}
 
-	return nil
+	return nil, args
 }

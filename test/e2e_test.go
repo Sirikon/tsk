@@ -82,6 +82,16 @@ func TestCLI_Run_Interactive_Command(t *testing.T) {
 		Run()
 }
 
-/*func TestCLI_Run_Command_With_Parameters(t *testing.T)  {
-	assertRun(t, []string{"params", "hello"}, "", 0, "hello")
-}*/
+func TestCLI_Run_Command_With_Parameter(t *testing.T)  {
+	utils.AssertRun(t).
+		Args("params", "hello").
+		ExpectedOutput("hello\n").
+		Run()
+}
+
+func TestCLI_Run_Command_With_Multiple_Parameters(t *testing.T)  {
+	utils.AssertRun(t).
+		Args("params", "hello", "world!").
+		ExpectedOutput("hello world!\n").
+		Run()
+}

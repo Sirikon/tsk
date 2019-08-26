@@ -2,7 +2,7 @@ package cli
 
 import (
 	"fmt"
-	"github.com/sirikon/tsk/src/info"
+	"github.com/sirikon/tsk/src/application"
 	"github.com/sirikon/tsk/src/utils"
 	"github.com/logrusorgru/aurora"
 	"io"
@@ -20,7 +20,7 @@ func (p *printer) getAurora() aurora.Aurora {
 	return aurora.NewAurora(p.colorsEnabled)
 }
 
-func (p *printer) header(tskFile *info.TskFile) {
+func (p *printer) header(tskFile *application.TskFile) {
 	au := p.getAurora()
 
 	_, _ = fmt.Fprintln(p.out)
@@ -35,14 +35,14 @@ func (p *printer) header(tskFile *info.TskFile) {
 }
 
 // PrintCommand .
-func (p *printer) command(command *info.Command, tskFile *info.TskFile, level int) {
+func (p *printer) command(command *application.Command, project *application.Project, level int) {
 	au := p.getAurora()
 
 	_, _ = fmt.Fprint(p.out, baseSpacing)
 	_, _ = fmt.Fprint(p.out, utils.PadLeft("", level+1, "  "))
 	_, _ = fmt.Fprint(p.out, au.Bold(au.Cyan(command.Name)))
 
-	relativePath, err := filepath.Rel(tskFile.CWD, command.Path)
+	relativePath, err := filepath.Rel(project.RootFolder, command.Path)
 	if err != nil {
 		relativePath = command.Path
 	}
@@ -50,7 +50,15 @@ func (p *printer) command(command *info.Command, tskFile *info.TskFile, level in
 	_, _ = fmt.Fprint(p.out, au.Faint(" "+relativePath))
 	_, _ = fmt.Fprintln(p.out)
 
-	for _, c := range command.Subcommands {
-		p.command(c, tskFile, level+1)
+	for _, c := range command.SubCommands {
+		p.command(c, project, level+1)
 	}
+}
+
+func (p *printer) line(text string) {
+	_, _ = fmt.Fprintln(p.out, text)
+}
+
+func (p *printer) emptyLine() {
+	_, _ = fmt.Fprintln(p.out)
 }

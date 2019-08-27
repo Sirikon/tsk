@@ -1,0 +1,17 @@
+version: 2
+
+jobs:
+
+  build:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: /ci/tsk
+    steps:
+      - checkout
+      - run: go mod download
+      - run: ./scripts/test.sh
+      - run: ./scripts/release.sh
+      - store_artifacts:
+          path: /dist
+          destination: build
+sm

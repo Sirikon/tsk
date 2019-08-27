@@ -22,12 +22,14 @@ jobs:
       - checkout
       - run: sudo apt-get install -y rpm
       - run: go get
+      - run: ./scripts/test.sh
       - run: ./scripts/release.sh
 
 workflows:
   version: 2
   release:
     jobs:
+      - build
       - release:
           filters:
             branches:

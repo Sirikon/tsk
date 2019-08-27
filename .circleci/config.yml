@@ -10,7 +10,27 @@ jobs:
       - run: sudo apt-get install -y rpm
       - run: go get
       - run: ./scripts/test.sh
-      - run: ./scripts/release.sh
+      - run: ./scripts/release.sh --snapshot --skip-publish
       - store_artifacts:
           path: ./dist
           destination: build
+
+  release:
+    docker:
+      - image: circleci/golang:1.12
+    steps:
+      - checkout
+      - run: sudo apt-get install -y rpm
+      - run: go get
+      - run: ./scripts/release.sh
+
+workflows:
+  version: 2
+  release:
+    jobs:
+      - release:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*(-.*)*/

@@ -5,13 +5,12 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.12
-    working_directory: /ci/tsk
     steps:
       - checkout
-      - run: go mod download
+      - run: sudo apt-get install -y rpm
+      - run: go get
       - run: ./scripts/test.sh
       - run: ./scripts/release.sh
       - store_artifacts:
-          path: /dist
+          path: ./dist
           destination: build
-sm

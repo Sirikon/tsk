@@ -32,7 +32,7 @@ func Release() {
 		fmt.Println("Found git tag:", currentTag)
 	}
 
-	// err := sh.RunV("goreleaser", goreleaserArgs...); check(err)
+	err := sh.RunV("goreleaser", goreleaserArgs...); check(err)
 }
 
 func getCurrentTag() string {

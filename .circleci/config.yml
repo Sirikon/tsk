@@ -7,6 +7,7 @@ jobs:
       - image: circleci/golang:1.12
     steps:
       - checkout
+      - run: cd $GOPATH && go get -u -d github.com/magefile/mage && cd $GOPATH/src/github.com/magefile/mage && go run bootstrap.go
       - run: sudo apt-get install -y rpm
       - run: go get
       - run: ./scripts/test.sh
@@ -14,25 +15,3 @@ jobs:
       - store_artifacts:
           path: ./dist
           destination: build
-
-  release:
-    docker:
-      - image: circleci/golang:1.12
-    steps:
-      - checkout
-      - run: sudo apt-get install -y rpm
-      - run: go get
-      - run: ./scripts/test.sh
-      - run: ./scripts/release.sh
-
-workflows:
-  version: 2
-  ci:
-    jobs:
-      - build
-      - release:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /v[0-9]+(\.[0-9]+)*(-.*)*/

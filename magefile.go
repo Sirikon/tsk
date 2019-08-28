@@ -28,7 +28,10 @@ func Release()  {
 }
 
 func getCurrentTag() string {
-	tag, err := sh.Output("git", "describe", "--tags"); handleError(err)
+	tag, err := sh.Output("git", "describe", "--tags", "--exact-match")
+	if err != nil {
+		return ""
+	}
 	return tag
 }
 

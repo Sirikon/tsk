@@ -1,9 +1,13 @@
 package cli
 
 import (
+	"strings"
 	"io"
 	"os"
 	"os/exec"
+	"runtime"
+	"log"
+	"bufio"
 
 	"github.com/sirikon/tsk/src/application"
 )
@@ -67,7 +71,21 @@ func (c *CLI) getPrinter() *printer {
 
 func (c *CLI) execCommand(command *application.Command, args []string, project *application.Project) int {
 	completeArgs := append([]string{command.Path}, args...)
-	cmd := exec.Command("sh", completeArgs...)
+
+	cli := "sh"
+
+	if runtime.GOOS == "windows" {
+		cli = "cmd.exe"
+		completeArgs = append([]string{"/c"}, completeArgs...)
+	}
+
+	if runtime.GOOS != "windows" {
+		interp := findInterpreter(command)
+		cli = interp.Command
+		completeArgs = append(interp.Arguments, completeArgs...)
+	}
+
+	cmd := exec.Command(cli, completeArgs...)
 	cmd.Dir = project.RootFolder
 	cmd.Stdout = c.Out
 	cmd.Stderr = c.Err
@@ -107,4 +125,41 @@ func findCommand(args []string, commands []*application.Command) (command *appli
 	}
 
 	return nil, args
+}
+
+
+type interpreter struct {
+	Command string
+	Arguments []string
+}
+// findInterpreter is used to determine the executable to use for a choosen script (Linux/Unix).
+func findInterpreter(command *application.Command) interpreter {
+
+	interp := "sh"
+	arguments := []string{}
+
+	file, err := os.Open(command.Path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	scanner.Scan()
+	line := scanner.Text()
+
+	// Parsing line
+	if line[2:] == "#!" {
+		line = strings.TrimLeft(line, "#!")
+		parts := strings.Split(line, " ")
+		interp = parts[0]
+
+		if len(parts) >= 2 {
+			arguments = append(arguments, parts[2:]...)
+		}
+	}
+
+
+	// Return interpreter
+	return interpreter{interp, arguments}
 }

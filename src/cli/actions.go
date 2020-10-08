@@ -91,6 +91,7 @@ func (c *CLI) execCommand(command *application.Command, args []string, project *
 	cmd.Stderr = c.Err
 	cmd.Stdin = c.In
 	cmd.Env = append(os.Environ(), buildEnvVars(project.TskFile)...)
+	log.Printf("Executing command %v\n", cmd)
 	err := cmd.Run()
 	if err != nil {
 		return 1
@@ -149,13 +150,13 @@ func findInterpreter(command *application.Command) interpreter {
 	line := scanner.Text()
 
 	// Parsing line
-	if line[2:] == "#!" {
+	if line[:2] == "#!" {
 		line = strings.TrimLeft(line, "#!")
 		parts := strings.Split(line, " ")
 		interp = parts[0]
 
 		if len(parts) >= 2 {
-			arguments = append(arguments, parts[2:]...)
+			arguments = append(arguments, parts[1:]...)
 		}
 	}
 

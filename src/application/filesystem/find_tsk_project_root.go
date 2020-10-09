@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"runtime"
 )
 
 func FindTskProjectRoot(basePath string) (string, error) {
@@ -22,7 +23,7 @@ func FindTskProjectRoot(basePath string) (string, error) {
 		if rootFolder == basePath {
 			return findTskProjectError("Tskfile.yml not found")
 		}
-		return FindTskProjectRoot(path.Join(basePath, ".."))
+		return FindTskProjectRoot(filepath.Dir(basePath))
 	}
 
 	if err != nil {
@@ -33,6 +34,13 @@ func FindTskProjectRoot(basePath string) (string, error) {
 }
 
 func getSystemRootFolder() (string, error) {
+	if runtime.GOOS == "windows" {
+		root, err := os.Getwd()
+		if err != nil {
+			return "", err
+		}
+		return filepath.VolumeName(root) + "\\", nil
+	}
 	return filepath.Abs("/")
 }
 

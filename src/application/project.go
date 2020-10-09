@@ -56,23 +56,30 @@ func getCommandsInFolder(folderPath string) ([]*Command, error) {
 		return nil, err
 	}
 
-	result := make([]*Command, len(files))
-	for i, file := range files {
-		command := &Command{
-			Name:     removeFileExtension(file.Name()),
-			Path:     path.Join(folderPath, file.Name()),
-			Runnable: !file.IsDir(),
-		}
+	// result := make([]*Command, len(files))
+	result := []*Command{}
+	for _, file := range files {
 
-		if file.IsDir() {
-			commands, err := getCommandsInFolder(path.Join(folderPath, file.Name()))
-			if err != nil {
-				return nil, err
+		if !strings.HasPrefix(file.Name(), ".") {
+			command := &Command{
+				Name:     removeFileExtension(file.Name()),
+				Path:     path.Join(folderPath, file.Name()),
+				Runnable: !file.IsDir(),
 			}
-			command.SubCommands = commands
+	
+			if file.IsDir() {
+				commands, err := getCommandsInFolder(path.Join(folderPath, file.Name()))
+				if err != nil {
+					return nil, err
+				}
+				command.SubCommands = commands
+			}
+	
+			// result[i] = command
+			result = append(result, command)
 		}
 
-		result[i] = command
+		
 	}
 
 	return result, nil

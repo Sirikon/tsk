@@ -1,3 +1,7 @@
+# NOT MAINTAINED ANYMORE
+
+Check [stevenkl's fork](https://github.com/stevenkl/tsk), which is being improved as of today.
+
 # tsk
 
 A task runner that only requires a `scripts` folder and a `Tskfile.yml` with one line.
